@@ -108,7 +108,7 @@ PingHostsContactAccessory.prototype = {
 					self.stateValue = notDetectedState;
 					self.setStatusFault(1);
 				} else {
-					self.stateValue = res.alive ? notDetectedState : detectedState;
+					self.stateValue = res.alive ? detectedState : notDetectedState;
 					self.setStatusFault(0);
 					if (! self.stateValue) {
 						self.log('[' + self.name + '] Ping result for ' + self.host + ' was ' + self.stateValue);

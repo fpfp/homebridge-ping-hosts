@@ -15,7 +15,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:jsworks/homebridge-ping-hosts.git"
+		"url": "git@github.com:fpfp/homebridge-ping-hosts.git"
 	},
 	"dependencies": {
 		"ping": "^0.2.0",

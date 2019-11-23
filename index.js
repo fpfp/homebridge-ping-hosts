@@ -2,6 +2,8 @@
 
 var Service, Characteristic, detectedState, notDetectedState;
 var ping = require('ping');
+var moment = require('moment');
+
 
 // Update UI immediately after sensor state change
 var updateUI = false;
@@ -24,7 +26,11 @@ function PingHostsPlatform(log, config) {
 	this.log = log;
     
     this.sensors = config['sensors'] || [];
-    
+    this.cacheDirectory = config["cacheDirectory"] || HomebridgeAPI.user.persistPath();
+
+    //allow to save status of ping
+    this.storage = require('node-persist');
+    this.storage.initSync({dir:this.cacheDirectory});
     // Allow retrieval of data from package.json
 	this.pkginfo = require('pkginfo')(module);
 
@@ -37,7 +43,7 @@ PingHostsPlatform.prototype = {
         var accessories = [];
 
         for (var i = 0; i < this.sensors.length; i++) {
-            var sensorAccessory = new PingHostsContactAccessory(this.pkginfo, this.log, this.sensors[i]);
+            var sensorAccessory = new PingHostsContactAccessory(this, this.log, this.sensors[i]);
             accessories.push(sensorAccessory);
         }
 
@@ -51,15 +57,18 @@ PingHostsPlatform.prototype = {
     
 }
 
-function PingHostsContactAccessory(pkginfo, log, config) {
+function PingHostsContactAccessory(platform, log, config) {
 
     this.log = log;
-    this.pkginfo = pkginfo;
+    this.pkginfo = platform.pkginfo;
 
     this.id = config['id'];
     this.name = config['name'] || 'Host Ping Sensor';
     this.host = config['host'] || 'localhost';
+    this.platform = platform;
     this.pingInterval = parseInt(config['interval']) || 300;
+    this.threshold = config['threshold'] || -1;
+
     
 	// Initial state
 	this.stateValue = detectedState;
@@ -104,23 +113,64 @@ PingHostsContactAccessory.prototype = {
 			.then(function (res, err) {
 				
 				if (err) {
+
 					self.log(err);
 					self.stateValue = notDetectedState;
 					self.setStatusFault(1);
+					
 				} else {
+
 					self.stateValue = res.alive ? detectedState : notDetectedState;
 					self.setStatusFault(0);
-					if (! self.stateValue) {
-						self.log('[' + self.name + '] Ping result for ' + self.host + ' was ' + self.stateValue);
-					}
+					// self.log('[' + self.name + '] Ping result for ' + self.host + ' was ' + res.alive);
+
 				}
+			
 				// Notify of state change, if applicable
-				if (self.stateValue != lastState) self.changeHandler(self.stateValue);
-	
+				if (self.stateValue != lastState){
+
+					//if treshold not set or exceed
+					if(self.treshold === -1 || self.checkThreshold()){
+
+						self.changeHandler(self.stateValue);
+						self.platform.storage.setItemSync('lastPing_' + self.id, Date.now());
+
+					}
+
+				}else{
+
+					self.platform.storage.setItemSync('lastPing_' + self.id, '');
+				
+				}
+
 			});
 
 	},
 	
+	checkThreshold: function(){
+
+		var self = this;
+
+	    var lastPing = self.platform.storage.getItemSync('lastPing_' + self.id);
+
+	    if(!lastPing) {
+	    
+	    	self.platform.storage.setItemSync('lastPing_' + self.id, Date.now());
+	        return false;
+	    
+	    }else {
+	    
+	        var currentMoment = moment();
+	        var activeThreshold = moment(lastPing).add(self.threshold, 's');
+	        
+			self.log( '[' + self.name + '] Check cache status - currentMoment: ' + currentMoment.format() + ' activeThreshold:' + activeThreshold.format() );
+
+	    	    	return currentMoment.isAfter(activeThreshold);
+
+	    	}
+
+	},
+
 	setStatusFault: function(value) {
 		
 		this._service.setCharacteristic(Characteristic.StatusFault, value);	

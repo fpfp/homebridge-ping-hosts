@@ -15,10 +15,12 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:fpfp/homebridge-ping-hosts.git"
+		"url": "git@github.com:jsworks/homebridge-ping-hosts.git"
 	},
 	"dependencies": {
 		"ping": "^0.2.0",
-		"pkginfo": "^0.3.1"
+		"pkginfo": "^0.3.1",
+    		"node-persist": "0.0.8",
+	    "moment": "^2.11.2"
 	}
 }

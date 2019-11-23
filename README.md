@@ -17,7 +17,8 @@ Example config.json entry:
 					"id": "ping-router",
 					"name": "Router Connectivity",
 					"host": "192.168.0.1",
-					"interval": 60
+					"interval": 60,
+					"treshold" : 300
 				},
 				{
 					"id": "ping-internent",

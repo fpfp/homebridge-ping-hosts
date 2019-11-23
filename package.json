@@ -1,26 +1,32 @@
 {
-	"name": "homebridge-ping-hosts",
-	"version": "1.0.0",
-	"description": "Ping state sensor plugin for homebridge (https://github.com/nfarina/homebridge)",
-	"license": "ISC",
-	"keywords": [
-		"homebridge-plugin"
-	],
-	"engines": {
-		"node": ">=0.12.0",
-		"homebridge": ">=0.2.0"
-	},
-	"author": {
-		"name": "jsWorks"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git@github.com:jsworks/homebridge-ping-hosts.git"
-	},
-	"dependencies": {
-		"ping": "^0.2.0",
-		"pkginfo": "^0.3.1",
-    		"node-persist": "0.0.8",
-	    "moment": "^2.11.2"
-	}
+  "name": "homebridge-ping-hosts",
+  "version": "1.0.0",
+  "description": "Ping state sensor plugin for homebridge (https://github.com/nfarina/homebridge)",
+  "license": "ISC",
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.2.0"
+  },
+  "author": "fpfp",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fpfp/homebridge-ping-hosts.git"
+  },
+  "dependencies": {
+    "ping": "^0.2.0",
+    "pkginfo": "^0.3.1",
+    "node-persist": "0.0.8",
+    "moment": "^2.11.2"
+  },
+  "bugs": {
+    "url": "https://github.com/fpfp/homebridge-ping-hosts/issues"
+  },
+  "homepage": "https://github.com/fpfp/homebridge-ping-hosts#readme",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
 }
